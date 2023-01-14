@@ -5,38 +5,40 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/ManuelLecaro/prueba_tecnica_dates/internal/domain/core"
 	"github.com/ManuelLecaro/prueba_tecnica_dates/internal/domain/ports/service"
+	"github.com/ManuelLecaro/prueba_tecnica_dates/internal/domain/ports/service/mocks"
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/mock"
 	"gotest.tools/assert"
 )
 
 func TestHolidayHandler_GetHoliday(t *testing.T) {
 	type fields struct {
-		name             string
-		requestBody      string
-		wantResponseBody string
-		wantStatus       int
-		service          service.HolidayService
+		name       string
+		wantStatus int
+		service    service.HolidayService
 	}
-	type args struct {
-		ctx *gin.Context
-	}
+
 	tests := []struct {
 		name   string
 		fields fields
-		args   args
 	}{
 		{
 			name: "should work correctly",
 			fields: fields{
-				service: nil,
+				service: func() service.HolidayService {
+					service := &mocks.HolidayService{}
+					service.On("GetHolidays", mock.Anything, mock.Anything).Return([]core.Holiday{})
+					return service
+				}(),
+				wantStatus: http.StatusOK,
 			},
-			args: args{},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			path := "/v1/holiday"
+			path := "/"
 
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodGet, path, nil)
