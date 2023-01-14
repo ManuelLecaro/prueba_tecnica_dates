@@ -7,5 +7,3 @@ services:
     ports:
       - 8000:8080
     restart: on-failure
-    volumes:
-      - .:/app
