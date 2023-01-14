@@ -1,0 +1,90 @@
+openapi: "3.0.1"
+info:
+  version: "0.0.1"
+  title: "holiday api"
+  description: "service about holidays"
+
+servers:
+  - url: http://localhost:3000/api/v1/holiday
+
+tags:
+  - name: "holidays"
+    description: "Everything about holidays"
+paths:
+  /:
+    get:
+      tags:
+        - "holidays"
+      summary: "Get holidays"
+      description: "Retrieves holiday data"
+      parameters:
+        - name: "retailer_id"
+          in: "header"
+          required: true
+          schema:
+            type: "integer"
+            format: "uint64"
+            example: 1
+        - in: query
+          name: title
+          schema:
+            type: string
+          description: title of the day
+        - in: query
+          name: date
+          schema:
+            type: string
+          description: date of the day
+        - in: query
+          name: type
+          schema:
+            type: string
+          description: type of the day
+        - in: query
+          name: extra
+          schema:
+            type: string
+          description: extra info of the day
+      responses:
+        "200":
+          description: "The pending holidays were retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Holiday"
+        "429":
+          description: "Rate limit exceeded"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  type:
+                    type: "string"
+                    default: "rate_limit_exceeded"
+                  message:
+                    type: "string"
+                    default: "Too Many Requests"
+
+components:
+  schemas:
+    Holiday:
+      type: "object"
+      properties:
+        date:
+          type: "string"
+          example: "2023-12-25"
+        title:
+          type: "string"
+          example: "Navidad"
+        type:
+          type: "string"
+          example: "religioso"
+        inalienable:
+          type: "boolean"
+          example: true
+        extra:
+          type: "string"
+          example: "religioso"
